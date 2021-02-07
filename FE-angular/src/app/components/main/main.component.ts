@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { formatDate } from "@angular/common";
 
@@ -21,8 +22,11 @@ export class MainComponent implements OnInit {
   isCurrentDateToday: boolean = true;
 
   constructor(
-    private rateService: RateService
-  ) { }
+    private rateService: RateService,
+    private dateAdapter: DateAdapter<Date>
+  ) {
+    this.dateAdapter.setLocale('en-GB');
+  }
 
   ngOnInit(): void {
     this.getRateByDate(this.date);
