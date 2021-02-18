@@ -13,11 +13,10 @@
             <mat-label>From</mat-label>
             <mat-select [(ngModel)]="selectedCurrency" (selectionChange)="convert()">
                 <mat-select-trigger>
-                    <p class="code">{{selectedCurrency?.code}}</p>
-                    <p class="title">{{selectedCurrency?.title}}</p>
+                    <p class="code">{{selectedCurrency}}</p>
                 </mat-select-trigger>
                 <mat-option *ngFor="let currency of currencies" [value]="currency">
-                    {{currency.code}} - {{currency.title}}
+                    {{currency}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -28,11 +27,10 @@
             <mat-label>To</mat-label>
             <mat-select [(ngModel)]="selectedBaseCurrency" (selectionChange)="convert()">
                 <mat-select-trigger>
-                    <p class="code">{{selectedBaseCurrency?.code}}</p>
-                    <p class="title">{{selectedBaseCurrency?.title}}</p>
+                    <p class="code">{{selectedBaseCurrency}}</p>
                 </mat-select-trigger>
                 <mat-option *ngFor="let currency of baseCurrencies" [value]="currency">
-                    {{currency.code}} - {{currency.title}}
+                    {{currency}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -44,18 +42,18 @@
 
     <mat-spinner *ngIf="showLoader" diameter="40" class="spinner"></mat-spinner>
 
-    <div class="results" *ngIf="!showLoader && this.totalAmount">
+    <div class="results" *ngIf="!showLoader && totalAmount">
         <div class="left-side">
-            {{ this.amountCopy }} <span class="code">{{this.selectedCurrency.code}}</span> =
+            {{ amountCopy }} <span class="code">{{selectedCurrency}}</span> =
         </div>
         <div class="total-amount">
-            {{this.totalAmount | number:'0.1-5' }} <span class="code">{{this.selectedBaseCurrency.code}}</span>
+            {{totalAmount | number:'0.1-5' }} <span class="code">{{selectedBaseCurrency}}</span>
         </div>
 
         <div class="additional">
-            <p>1 {{this.selectedBaseCurrency.code}} = {{this.revertedRateNBU | number:'0.1-5' }}
-                {{this.selectedCurrency.code}}</p>
-            <p>1 {{this.selectedCurrency.code}} = {{this.rateNBU | number:'0.1-5' }} {{this.selectedBaseCurrency.code}}
+            <p>1 {{selectedBaseCurrency}} = {{revertedRateNBU | number:'0.1-5' }}
+                {{selectedCurrency}}</p>
+            <p>1 {{selectedCurrency}} = {{rateNBU | number:'0.1-5' }} {{selectedBaseCurrency}}
             </p>
         </div>
     </div>

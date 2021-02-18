@@ -14,11 +14,11 @@ export class ConverterComponent implements OnInit {
   private unsubscribe = new Subject<void>();
 
   showLoader: boolean = false;
-  currencies: { code: string; title: number; }[] = [];
-  baseCurrencies: { code: string; title: number; }[] = [];
+  currencies: string[] = [];
+  baseCurrencies: string[] = [];
 
-  selectedCurrency: { code: string; title: number; };
-  selectedBaseCurrency: { code: string; title: number; };
+  selectedCurrency: string;
+  selectedBaseCurrency: string;
   amount: number;
 
   rateNBU: number;
@@ -45,13 +45,11 @@ export class ConverterComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         data => {
-          this.baseCurrencies.push({ code: data[0].base_currency, title: data[0].base_currency_title });
+          this.baseCurrencies.push('UAH');
           this.selectedBaseCurrency = this.baseCurrencies[0];
           this.currencies = data
-            .map(item => {
-              return { code: item.currency, title: item.currency_title };
-            })
-            .sort((a, b) => a.code === 'USD' ? -1 : a.code === 'EUR' ? -1 : a.code.localeCompare(b.code));
+            .map(item => item.currency)
+            .sort((a, b) => a === 'USD' ? -1 : a === 'EUR' ? -1 : a.localeCompare(b.code));
 
           this.selectedCurrency = this.currencies[0];
           this.amount = 10;
@@ -66,7 +64,7 @@ export class ConverterComponent implements OnInit {
 
   convert(): void {
     if (this.amount && this.selectedCurrency && this.selectedBaseCurrency) {
-      this.rateService.convert(this.amount, this.selectedCurrency.code, this.selectedBaseCurrency.code)
+      this.rateService.convert(this.amount, this.selectedCurrency, this.selectedBaseCurrency)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(
           data => {
