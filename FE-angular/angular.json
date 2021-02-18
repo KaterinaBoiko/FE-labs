@@ -123,5 +123,8 @@
       }
     }
   },
-  "defaultProject": "FE-angular"
+  "defaultProject": "FE-angular",
+  "cli": {
+    "analytics": false
+  }
 }

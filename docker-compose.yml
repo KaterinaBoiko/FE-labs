@@ -1,7 +1,14 @@
 version: '3'
 
 services:
-  angular: 
+  angular:
+    container_name: angular
     build: FE-angular 
     ports:
-      - "4200:4200" 
+      - 4202:4200
+
+  backend:
+    container_name: backend
+    build: backend 
+    ports:
+      - 3000:3000

@@ -1,8 +1,8 @@
-@import '../../../assets//styles/global.scss';
+@import "../../../assets//styles/global.scss";
 
 :host {
     display: block;
-    min-height: calc(100% - 150px);
+    min-height: calc(100% - 30px);
     background-color: $bg-color;
     padding-top: 30px;
 }
@@ -25,7 +25,7 @@ table {
 
 .mat-header-cell,
 .mat-cell {
-    padding: 0 25px ;
+    padding: 0 25px;
     text-align: center;
 
     a {
@@ -42,7 +42,6 @@ table {
 }
 
 .home ::ng-deep .mat-form-field {
-
     .mat-form-field-flex {
         padding: 0 10px !important;
     }

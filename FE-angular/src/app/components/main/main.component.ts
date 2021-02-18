@@ -17,7 +17,7 @@ export class MainComponent implements OnInit {
   private unsubscribe = new Subject<void>();
 
   dataSource = [];
-  date: Date = new Date('02.06.2021');
+  date: Date = new Date();
   showLoader: boolean = false;
   isCurrentDateToday: boolean = true;
 
@@ -38,7 +38,8 @@ export class MainComponent implements OnInit {
   }
 
   onDateChange(event: MatDatepickerInputEvent<Date>) {
-    this.date = new Date('02.06.2021');
+    this.isCurrentDateToday = formatDate(event.value, 'dd.MM.yyyy', 'en-US') === formatDate(new Date(), 'dd.MM.yyyy', 'en-US');
+    this.getRateByDate(event.value);
   }
 
   setDateToday(): void {
@@ -54,8 +55,8 @@ export class MainComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         data => {
-          data.exchangeRate.sort((a, b) => a.currency === 'USD' ? -1 : a.currency === 'EUR' ? -1 : a.currency.localeCompare(b.currency));
-          this.dataSource = data.exchangeRate;
+          data?.sort((a, b) => a?.currency === 'USD' ? -1 : a?.currency === 'EUR' ? -1 : a?.currency.localeCompare(b?.currency));
+          this.dataSource = data;
           this.showLoader = false;
         },
         error => {
