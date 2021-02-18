@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -18,5 +18,20 @@ export class RateService {
   getRateByDate(date: string): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/rate/${date}`);
+  }
+
+  getCurrencyPairs(): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/currency-pairs`);
+  }
+
+  convert(amount: number, currency: string, base_currency: string): Observable<any> {
+    const params = new HttpParams()
+      .append('amount', amount.toString())
+      .append('currency', currency)
+      .append('base_currency', base_currency);
+
+    return this.http.get(
+      `${this.apiUrl}/convert`, { params });
   }
 }
