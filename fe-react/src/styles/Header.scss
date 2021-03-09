@@ -1,0 +1,18 @@
+@import '../App.scss';
+
+
+.header {
+    display: flex;
+    align-items: center;
+    height: 59px;
+    background-color: $dark;
+    border-bottom: 1px solid $main;
+    padding: 0 20px;
+}
+
+p {
+    font-size: 19px;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
