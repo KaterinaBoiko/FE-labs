@@ -34,4 +34,9 @@ export class RateService {
     return this.http.get(
       `${this.apiUrl}/convert`, { params });
   }
+
+  getCurrencyDetails(currency: string): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/details/${currency}`);
+  }
 }

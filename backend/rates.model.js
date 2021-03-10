@@ -1,10 +1,26 @@
 const axios = require('axios');
+const sql = require('./connection');
 const formatDate = require("dateformat");
 
 exports.getRateByDate = (req, res) => {
     const { date } = req.params;
     axios.get(`https://api.privatbank.ua/p24api/exchange_rates?json&date=${ date }`)
         .then(response => {
+            console.log(response.data.exchangeRate);
+            response.data.exchangeRate.forEach(row => {
+                const { base_currency, currency } = response.data.exchangeRate;
+                sql.query(`select id from currency_pairs where base_currency='${ base_currency }' and currency = '${ currency }'`, (err, result) => {
+                    if (err || !result.rowCount)
+                        return;
+
+                    sql.query(`INSERT INTO exchange_rates (currency_pair_id, rate_nb, sale_privat, purchase_privat, date)` +
+                        `values (${ result.rows[ 0 ].id }, ${ rate_nb ? rate_nb : 'null' }, ${ sale_privat ? sale_privat : 'null' }, ${ purchase_privat ? purchase_privat : 'null' }, '${ date }') on conflict do nothing`, (err) => {
+                            if (err)
+                                return console.log(err);
+                        });
+                });
+            });
+
             res(null, response.data.exchangeRate);
         })
         .catch(err => {
@@ -58,4 +74,15 @@ exports.getCurrencyPairs = (req, res) => {
         .catch(err => {
             res(err.response);
         });
+};
+
+exports.getCurrencyDetails = (req, res) => {
+    const { currency } = req.params;
+
+    sql.query(`select * from exchange_rates where currency_pair_id = (select id from currency_pairs where base_currency = 'UAH' and currency = '${ currency }')`, (err, data) => {
+        if (err)
+            return res(err.routine);
+
+        return res(null, data.rows);
+    });
 };
