@@ -6,15 +6,14 @@ exports.getRateByDate = (req, res) => {
     const { date } = req.params;
     axios.get(`https://api.privatbank.ua/p24api/exchange_rates?json&date=${ date }`)
         .then(response => {
-            console.log(response.data.exchangeRate);
-            response.data.exchangeRate.forEach(row => {
-                const { base_currency, currency } = response.data.exchangeRate;
-                sql.query(`select id from currency_pairs where base_currency='${ base_currency }' and currency = '${ currency }'`, (err, result) => {
+            response.data.exchangeRate.forEach(pair => {
+                const { baseCurrency, currency, saleRateNB, saleRate, purchaseRate } = pair;
+                sql.query(`select id from currency_pairs where base_currency='${ baseCurrency }' and currency = '${ currency }'`, (err, result) => {
                     if (err || !result.rowCount)
                         return;
 
                     sql.query(`INSERT INTO exchange_rates (currency_pair_id, rate_nb, sale_privat, purchase_privat, date)` +
-                        `values (${ result.rows[ 0 ].id }, ${ rate_nb ? rate_nb : 'null' }, ${ sale_privat ? sale_privat : 'null' }, ${ purchase_privat ? purchase_privat : 'null' }, '${ date }') on conflict do nothing`, (err) => {
+                        `values (${ result.rows[ 0 ].id }, ${ saleRateNB ? saleRateNB : 'null' }, ${ saleRate ? saleRate : 'null' }, ${ purchaseRate ? purchaseRate : 'null' }, '${ date }') on conflict do nothing`, (err) => {
                             if (err)
                                 return console.log(err);
                         });
