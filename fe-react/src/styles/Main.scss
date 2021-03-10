@@ -1,0 +1,47 @@
+@import '../App.scss';
+
+.top {
+    width: 70%;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.react-datepicker-wrapper {
+    position: absolute;
+    right: 0;
+}
+
+.title {
+    font-size: 25px;
+}
+
+.loading {
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    width: 70%;
+    margin: 20px auto;
+}
+
+table {
+    background: #424242;
+    color: white;
+    width: 70%;
+    margin: 20px auto;
+}
+
+th {
+    border-bottom: 1px solid $main;
+}
+
+.p-datatable-thead tr {
+    height: 55px;
+} 
+
+td {
+    text-align: center;
+    height: 40px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}

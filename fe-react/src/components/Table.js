@@ -1,61 +1,71 @@
 import React, { Component } from 'react';
+import dateFormat from 'dateformat';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
 class Table extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            data: [],
+            date: props.date
+        };
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.date !== this.props.date) {
+            this.setState({
+                date: this.props.date,
+                isLoaded: false
+            },
+                () => {
+                    this.getRateByDate();
+                });
+        }
+    }
+
+    getRateByDate() {
+        fetch('http://localhost:3000/rate/' + dateFormat(this.state.date, 'dd.mm.yyyy'))
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        data: result.filter(row => row.currency)
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            );
+    }
+
+    componentDidMount() {
+        this.getRateByDate();
+    }
+
     render() {
+        const { error, isLoaded, data } = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        }
+        if (!isLoaded) {
+            return <div className="loading">Loading...</div>;
+        }
 
         const columns = [
-            { field: 'name', header: 'Name' },
-            { field: 'category', header: 'Category' },
-            { field: 'price', header: 'Price' },
-            { field: 'quantity', header: 'Quantity' }
+            { field: 'currency', header: 'Currency' },
+            { field: 'saleRateNB', header: 'NBU Rate' },
+            { field: 'purchaseRate', header: 'Purchase Privat' },
+            { field: 'saleRate', header: 'Sale Privat' }
         ];
 
-        const DISHES =
-            [
-                {
-                    id: 0,
-                    name: 'Uthappizza',
-                    image: '/assets/images/uthappizza.png',
-                    category: 'mains',
-                    label: 'Hot',
-                    price: '4.99',
-                    featured: true,
-                    description: 'A unique combination of Indian Uthappam (pancake) and Italian pizza, topped with Cerignola olives, ripe vine cherry tomatoes, Vidalia onion, Guntur chillies and Buffalo Paneer.'
-                },
-                {
-                    id: 1,
-                    name: 'Zucchipakoda',
-                    image: '/assets/images/zucchipakoda.png',
-                    category: 'appetizer',
-                    label: '',
-                    price: '1.99',
-                    featured: false,
-                    description: 'Deep fried Zucchini coated with mildly spiced Chickpea flour batter accompanied with a sweet-tangy tamarind sauce'
-                },
-                {
-                    id: 2,
-                    name: 'Vadonut',
-                    image: '/assets/images/vadonut.png',
-                    category: 'appetizer',
-                    label: 'New',
-                    price: '1.99',
-                    featured: false,
-                    description: 'A quintessential ConFusion experience, is it a vada or is it a donut?'
-                },
-                {
-                    id: 3,
-                    name: 'ElaiCheese Cake',
-                    image: '/assets/images/elaicheesecake.png',
-                    category: 'dessert',
-                    label: '',
-                    price: '2.99',
-                    featured: false,
-                    description: 'A delectable, semi-sweet New York Style Cheese Cake, with Graham cracker crust and spiced with Indian cardamoms'
-                }
-            ];
 
         const dynamicColumns = columns.map((col, i) => {
             return <Column key={col.field} field={col.field} header={col.header} />;
@@ -63,7 +73,7 @@ class Table extends Component {
 
         return (
             <>
-                <DataTable value={DISHES}>
+                <DataTable value={data}>
                     {dynamicColumns}
                 </DataTable>
             </>

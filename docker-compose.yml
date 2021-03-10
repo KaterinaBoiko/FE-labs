@@ -1,11 +1,18 @@
 version: '3'
 
 services:
+
   angular:
     container_name: angular
     build: FE-angular 
     ports:
       - 4202:4200
+
+  react:
+    container_name: react
+    build: fe-react 
+    ports:
+      - 3001:3001
 
   backend:
     container_name: backend
