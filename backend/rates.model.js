@@ -4,27 +4,15 @@ const formatDate = require("dateformat");
 
 exports.getRateByDate = (req, res) => {
     const { date } = req.params;
-    axios.get(`https://api.privatbank.ua/p24api/exchange_rates?json&date=${ date }`)
-        .then(response => {
-            response.data.exchangeRate.forEach(pair => {
-                const { baseCurrency, currency, saleRateNB, saleRate, purchaseRate } = pair;
-                sql.query(`select id from currency_pairs where base_currency='${ baseCurrency }' and currency = '${ currency }'`, (err, result) => {
-                    if (err || !result.rowCount)
-                        return;
+    sql.query(`select rates.*, pairs.currency from exchange_rates rates left join currency_pairs pairs ON rates.currency_pair_id = pairs.id where rates.date = '${ date }'`, (err, data) => {
+        if (err)
+            return res(err.routine);
 
-                    sql.query(`INSERT INTO exchange_rates (currency_pair_id, rate_nb, sale_privat, purchase_privat, date)` +
-                        `values (${ result.rows[ 0 ].id }, ${ saleRateNB ? saleRateNB : 'null' }, ${ saleRate ? saleRate : 'null' }, ${ purchaseRate ? purchaseRate : 'null' }, '${ date }') on conflict do nothing`, (err) => {
-                            if (err)
-                                return console.log(err);
-                        });
-                });
-            });
+        if (!data.rowCount)
+            return getAndSetRateByDate(date, res);
 
-            res(null, response.data.exchangeRate);
-        })
-        .catch(err => {
-            res(err.response);
-        });
+        return res(null, data.rows);
+    });
 };
 
 exports.convert = (req, res) => {
@@ -77,11 +65,52 @@ exports.getCurrencyPairs = (req, res) => {
 
 exports.getCurrencyDetails = (req, res) => {
     const { currency } = req.params;
+    const { from, to } = getFormatedtFromToDates(req);
 
-    sql.query(`select * from exchange_rates where currency_pair_id = (select id from currency_pairs where base_currency = 'UAH' and currency = '${ currency }')`, (err, data) => {
+    sql.query(`select * from exchange_rates where currency_pair_id = (select id from currency_pairs where base_currency = 'UAH' and currency = '${ currency }' and date >= '${ from }' and date < '${ to }')`, (err, data) => {
         if (err)
             return res(err.routine);
 
-        return res(null, data.rows);
+        return res(null, { data: data.rows, currency });
     });
 };
+
+function getFormatedtFromToDates(req) {
+    let { from, to } = req.query;
+
+    if (!to) {
+        to = new Date();
+    }
+
+    if (!from) {
+        from = new Date(to);
+        from.setMonth(from.getMonth() - 3);
+    }
+
+    if (new Date(from) > new Date(to)) {
+        throw 'Incorrect dates sequence';
+    }
+
+    return {
+        from: formatDate(from, "d.m.yyyy"),
+        to: formatDate(to, "d.m.yyyy")
+    };
+};
+
+function getAndSetRateByDate(date, res) {
+    axios.get(`https://api.privatbank.ua/p24api/exchange_rates?json&date=${ date }`)
+        .then(response => {
+            response.data.exchangeRate.forEach(pair => {
+                const { baseCurrency, currency, saleRateNB, saleRate, purchaseRate } = pair;
+                sql.query(`select id from currency_pairs where base_currency='${ baseCurrency }' and currency = '${ currency }'`, (err, result) => {
+                    if (err || !result.rowCount)
+                        return;
+
+                    sql.query(`INSERT INTO exchange_rates (currency_pair_id, rate_nb, sale_privat, purchase_privat, date)` +
+                        `values (${ result.rows[ 0 ].id }, ${ saleRateNB ? saleRateNB : 'null' }, ${ saleRate ? saleRate : 'null' }, ${ purchaseRate ? purchaseRate : 'null' }, '${ date }') on conflict do nothing`);
+                });
+            });
+
+            res(null, response.data.exchangeRate);
+        });
+}

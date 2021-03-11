@@ -12,7 +12,7 @@ import { CHART_COLORS } from '../../shared/constants/chart-configs';
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.css']
+  styleUrls: ['./details.component.scss']
 })
 export class DetailsComponent implements OnInit {
   private unsubscribe = new Subject<void>();
@@ -44,25 +44,26 @@ export class DetailsComponent implements OnInit {
     this.rateService.getCurrencyDetails(this.currency)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
-        data => {
+        response => {
           this.showLoader = false;
-          this.details = data;
-          if (!this.details.data.length) {
+          this.details = response.data;
+          this.currency = response.currency;
+          if (!this.details?.length) {
             this.noData = true;
             return;
           }
-          this.details.data.sort((a, b) => a.date > b.date ? 1 : -1);
+          this.details.sort((a, b) => a.date > b.date ? 1 : -1);
           this.setChartDetails();
         },
         error => {
           this.showLoader = false;
-          console.log(error);
+
         }
       );
   }
 
   setChartDetails(): void {
-    const { data } = this.details;
+    const data = this.details;
     const datasets = [
       { label: 'PrivatBank purchase', data: [] },
       { label: 'NBU rate', data: [] },

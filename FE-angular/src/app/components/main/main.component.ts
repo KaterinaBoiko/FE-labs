@@ -55,7 +55,15 @@ export class MainComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         data => {
+          data = data.filter(record => record.currency);
           data?.sort((a, b) => a?.currency === 'USD' ? -1 : a?.currency === 'EUR' ? -1 : a?.currency.localeCompare(b?.currency));
+          if (data[0].purchaseRate) {
+            data.forEach(record => {
+              record.rate_nb = record.saleRateNB;
+              record.purchase_privat = record.saleRate;
+              record.purchase_privat = record.purchaseRate;
+            });
+          }
           this.dataSource = data;
           this.showLoader = false;
         },

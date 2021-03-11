@@ -28,17 +28,17 @@
 
         <ng-container matColumnDef="nbu">
             <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"> NBU </th>
-            <td mat-cell *matCellDef="let element"> {{element.saleRateNB}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.rate_nb}} </td>
         </ng-container>
 
         <ng-container matColumnDef="purchase">
             <th mat-header-cell *matHeaderCellDef> Purchase </th>
-            <td mat-cell *matCellDef="let element"> {{element.purchaseRate}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.purchase_privat}} </td>
         </ng-container>
 
         <ng-container matColumnDef="sale">
             <th mat-header-cell *matHeaderCellDef> Sale </th>
-            <td mat-cell *matCellDef="let element"> {{element.saleRate}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.sale_privat}} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="['currency', 'privatbank', 'nbu']"></tr>
