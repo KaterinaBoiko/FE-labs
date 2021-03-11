@@ -2,12 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
-import { Subject } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ChartConfigs } from 'src/app/shared/classes/chart';
 
+import { ChartConfigs } from 'src/app/shared/classes/chart';
 import { RateService } from '../../services/rate.service';
 import { CHART_COLORS } from '../../shared/constants/chart-configs';
+import { getData, getSelected } from '../../store/selectors/rate.selectors';
+import { IAppState } from 'src/app/store/state/app.state';
+import { GetRates } from 'src/app/store/actions/rate.actions';
 
 @Component({
   selector: 'app-details',
@@ -23,15 +27,20 @@ export class DetailsComponent implements OnInit {
   details: any;
   chartDetails: ChartConfigs;
   colors = CHART_COLORS;
+  selected$: Observable<string> = this.store.pipe(select(getSelected));
+  data$: Observable<any>;
 
   constructor(
+    private store: Store<IAppState>,
     private route: ActivatedRoute,
     private rateService: RateService
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
-    this.currency = this.route.snapshot.paramMap.get('currency');
-    this.getCurrencyDetails();
+    this.store.dispatch(new GetRates());
+    //this.currency = this.route.snapshot.paramMap.get('currency');
+    //this.getCurrencyDetails();
   }
 
   ngOnDestroy() {

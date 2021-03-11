@@ -3,11 +3,13 @@ import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { formatDate } from "@angular/common";
 
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { GetSelectedCurrency } from '../../store/actions/rate.actions';
 import { RateService } from '../../services/rate.service';
-
+import { IAppState } from 'src/app/store/state/app.state';
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -22,6 +24,7 @@ export class MainComponent implements OnInit {
   isCurrentDateToday: boolean = true;
 
   constructor(
+    private store: Store<IAppState>,
     private rateService: RateService,
     private dateAdapter: DateAdapter<Date>
   ) {
@@ -46,6 +49,10 @@ export class MainComponent implements OnInit {
     this.date = new Date();
     this.isCurrentDateToday = true;
     this.getRateByDate(this.date);
+  }
+
+  onSelectCurrency(currency: string): void {
+    this.store.dispatch(new GetSelectedCurrency(currency));
   }
 
   getRateByDate(date: Date | string) {

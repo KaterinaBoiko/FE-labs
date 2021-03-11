@@ -1,6 +1,7 @@
 <div class="wrapper">
     <mat-spinner *ngIf="showLoader" class="spinner" diameter="40"></mat-spinner>
 
+    <span class="code">{{selected$ | async}}</span>
     <div class="title" *ngIf="details">
         <span class="code">{{currency}}</span>
     </div>
