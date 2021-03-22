@@ -4,17 +4,32 @@ import { IRateState } from '../state/rate.state';
 
 const selectRates = (state: IAppState) => state.rates;
 
-export const getCodes = createSelector(
+export const getSelectedDate = createSelector(
     selectRates,
-    (state: IRateState) => state.currencies
+    (state: IRateState) => state.selectedDate
 );
 
-export const getData = createSelector(
+export const getRateByDate = createSelector(
     selectRates,
-    (state: IRateState) => state.data
+    (state: IRateState) => state.rateBySelectedDate
 );
 
-export const getSelected = createSelector(
+export const getSelectedCurrency = createSelector(
     selectRates,
-    (state: IRateState) => state.selectedCurrency
+    (state: IRateState) => state.selectedCurrencyCode
+);
+
+export const getSelectedCurrencyDetails = createSelector(
+    selectRates,
+    (state: IRateState) => state.currencyDetails
+);
+
+export const isRatesLoading = createSelector(
+    selectRates,
+    (state: IRateState) => state.loadingRate
+);
+
+export const isDetailsLoading = createSelector(
+    selectRates,
+    (state: IRateState) => state.loadingDetails
 );

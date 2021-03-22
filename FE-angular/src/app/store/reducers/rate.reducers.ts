@@ -1,5 +1,3 @@
-import { ActionReducerMap } from '@ngrx/store';
-import * as rateAction from '../actions/rate.actions';
 import { ERateActions, RateActions } from '../actions/rate.actions';
 import { initialRateState, IRateState } from '../state/rate.state';
 
@@ -8,10 +6,58 @@ export const rateReducers = (
     action: RateActions
 ): IRateState => {
     switch (action.type) {
-        case ERateActions.GetSelectedCurrency: {
+        case ERateActions.LoadRateByDate: {
             return {
                 ...state,
-                selectedCurrency: action.payload
+                selectedDate: action.payload,
+                loadingRate: true,
+                errorGettingRate: null
+            };
+        }
+        case ERateActions.LoadRateByDateSuccess: {
+            return {
+                ...state,
+                loadingRate: false,
+                rateBySelectedDate: action.payload.data
+            };
+        }
+        case ERateActions.LoadRateByDateFailure: {
+            return {
+                ...state,
+                loadingRate: false,
+                errorGettingRate: action.payload.error
+            };
+        }
+        case ERateActions.GetRatesByDate: {
+            return {
+                ...state
+            };
+        }
+        case ERateActions.LoadCurrencyDetails: {
+            return {
+                ...state,
+                selectedCurrencyCode: action.payload,
+                loadingDetails: true,
+                errorGettingDetails: null
+            };
+        }
+        case ERateActions.LoadCurrencyDetailsSuccess: {
+            return {
+                ...state,
+                loadingDetails: false,
+                currencyDetails: action.payload.data
+            };
+        }
+        case ERateActions.LoadCurrencyDetailsFailure: {
+            return {
+                ...state,
+                loadingDetails: false,
+                errorGettingDetails: action.payload.error
+            };
+        }
+        case ERateActions.GetSelectedCurrency: {
+            return {
+                ...state
             };
         }
         default:

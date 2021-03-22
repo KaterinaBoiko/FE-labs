@@ -9,9 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 import { ChartConfigs } from 'src/app/shared/classes/chart';
 import { RateService } from '../../services/rate.service';
 import { CHART_COLORS } from '../../shared/constants/chart-configs';
-import { getData, getSelected } from '../../store/selectors/rate.selectors';
+import { getSelectedCurrency, getSelectedCurrencyDetails } from '../../store/selectors/rate.selectors';
 import { IAppState } from 'src/app/store/state/app.state';
-import { GetRates } from 'src/app/store/actions/rate.actions';
 
 @Component({
   selector: 'app-details',
@@ -24,11 +23,10 @@ export class DetailsComponent implements OnInit {
   currency: string;
   showLoader: boolean = false;
   noData: boolean = false;
-  details: any;
   chartDetails: ChartConfigs;
   colors = CHART_COLORS;
-  selected$: Observable<string> = this.store.pipe(select(getSelected));
-  data$: Observable<any>;
+  selectedCode: Observable<string> = this.store.pipe(select(getSelectedCurrency));
+  details: Observable<any> = this.store.pipe(select(getSelectedCurrencyDetails));
 
   constructor(
     private store: Store<IAppState>,
@@ -38,8 +36,6 @@ export class DetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(new GetRates());
-    //this.currency = this.route.snapshot.paramMap.get('currency');
     //this.getCurrencyDetails();
   }
 
@@ -48,28 +44,28 @@ export class DetailsComponent implements OnInit {
     this.unsubscribe.complete();
   }
 
-  getCurrencyDetails(): void {
-    this.showLoader = true;
-    this.rateService.getCurrencyDetails(this.currency)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        response => {
-          this.showLoader = false;
-          this.details = response.data;
-          this.currency = response.currency;
-          if (!this.details?.length) {
-            this.noData = true;
-            return;
-          }
-          this.details.sort((a, b) => a.date > b.date ? 1 : -1);
-          this.setChartDetails();
-        },
-        error => {
-          this.showLoader = false;
+  // getCurrencyDetails(): void {
+  //   this.showLoader = true;
+  //   this.rateService.getCurrencyDetails(this.currency)
+  //     .pipe(takeUntil(this.unsubscribe))
+  //     .subscribe(
+  //       response => {
+  //         this.showLoader = false;
+  //         this.details = response.data;
+  //         this.currency = response.currency;
+  //         if (!this.details?.length) {
+  //           this.noData = true;
+  //           return;
+  //         }
+  //         this.details.sort((a, b) => a.date > b.date ? 1 : -1);
+  //         this.setChartDetails();
+  //       },
+  //       error => {
+  //         this.showLoader = false;
 
-        }
-      );
-  }
+  //       }
+  //     );
+  // }
 
   setChartDetails(): void {
     const data = this.details;

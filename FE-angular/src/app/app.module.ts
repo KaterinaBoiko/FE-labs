@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 
 import { ChartsModule } from 'ng2-charts';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 import { MaterialModule } from './material.module';
 import { RoutingModule } from './routing.module';
@@ -15,6 +16,7 @@ import { ConverterComponent } from './components/converter/converter.component';
 import { HeaderComponent } from './components/header/header.component';
 import { DetailsComponent } from './components/details/details.component';
 import { appReducers } from './store/reducers/app.reducers';
+import { effects } from './store/effects/app.effects';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { appReducers } from './store/reducers/app.reducers';
     MaterialModule,
     FormsModule,
     ChartsModule,
-    StoreModule.forRoot(appReducers)
+    StoreModule.forRoot(appReducers),
+    EffectsModule.forRoot(effects)
   ],
   providers: [],
   bootstrap: [AppComponent]
