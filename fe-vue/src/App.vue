@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
-    <Header />
-    <Table />
+    <Header @dateChanges="onDateChange" />
+    <Table :date="date" />
   </div>
 </template>
 
@@ -14,6 +14,14 @@ export default {
   components: {
     Header,
     Table,
+  },
+  data: () => ({
+    date: new Date(),
+  }),
+  methods: {
+    onDateChange(data) {
+      this.date = data.date;
+    },
   },
 };
 </script>

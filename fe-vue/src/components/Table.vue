@@ -24,24 +24,38 @@ import axios from "axios";
 import dateFormat from "dateformat";
 
 export default {
-  name: "TableTemplate",
+  props: ["date"],
   data: () => ({
-    date: new Date(),
     data: [],
   }),
   mounted() {
-    axios
-      .get("http://localhost:3000/rate/" + dateFormat(this.date, "dd.mm.yyyy"))
-      .then((response) => {
-        this.data = response.data;
-        if (this.data[0].saleRateNB) {
-          this.data.forEach((record) => {
-            record.rate_nb = record.saleRateNB;
-            record.sale_privat = record.saleRate;
-            record.purchase_privat = record.purchaseRate;
-          });
-        }
-      });
+    this.getRateByDate();
+  },
+  watch: {
+    date: {
+      handler: function (newDate) {
+        this.getRateByDate(newDate);
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    getRateByDate() {
+      axios
+        .get(
+          "http://localhost:3000/rate/" + dateFormat(this.date, "dd.mm.yyyy")
+        )
+        .then((response) => {
+          this.data = response.data;
+          if (this.data[0]?.saleRateNB) {
+            this.data.forEach((record) => {
+              record.rate_nb = record.saleRateNB;
+              record.sale_privat = record.saleRate;
+              record.purchase_privat = record.purchaseRate;
+            });
+          }
+        });
+    },
   },
 };
 </script>
